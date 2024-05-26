@@ -8,12 +8,13 @@ from drawer import Drawer
 from parametric_curve import ParametricCurve
 from function_curve import FunctionCurve
 from polar_equation_curve import PolarCurve
+from implicit_equation_graph import ImplicitEquationGraph
 
 
 def main():
     image_options = ImageOptions(
         image_size=(4000, 4000),
-        draw_interval_bounds=[[-20, 20], [-20, 20]],
+        draw_interval_bounds=[[-15, 15], [-15, 15]],
         background_color=(255, 255, 255),
         has_axis=True,
     )
@@ -21,29 +22,23 @@ def main():
     image = MyImage(image_options)
 
     draw_options_and_parametric_curve_per_name = {
+        "background": [
+            ImplicitEquationGraph(
+                left_term=lambda x, y: np.sin(x - np.sin(x + y)),
+                rigth_term=lambda x, y: 0,
+                sign="=",
+                tolerance=1e-2,
+                interval_bounds=[[-15, 15], [-15, 15]],
+            ),
+            DrawOptions(draw_color=(200, 240, 240), draw_width=10),
+        ],
         "star": [
             ParametricCurve(
                 interval_bounds=[0, 6 * np.pi],
                 x_func=lambda t: 2 * np.cos(t) + 5 * np.cos(2 * t / 3) + 7.5,
                 y_func=lambda t: 2 * np.sin(t) - 5 * np.sin(2 * t / 3) + 7.5,
             ),
-            DrawOptions(draw_color=(72, 190, 240), draw_width=20),
-        ],
-        "circle": [
-            ParametricCurve(
-                interval_bounds=[0, 2 * np.pi],
-                x_func=lambda t: np.cos(t),
-                y_func=lambda t: np.sin(t),
-            ),
-            DrawOptions(draw_color=(240, 232, 72), draw_width=20),
-        ],
-        "circle_2": [
-            ParametricCurve(
-                interval_bounds=[0, 2 * np.pi],
-                x_func=lambda t: 3 * np.cos(t),
-                y_func=lambda t: 3 * np.sin(t),
-            ),
-            DrawOptions(draw_color=(240, 232, 72), draw_width=20),
+            DrawOptions(draw_color=(100, 160, 240), draw_width=20),
         ],
         "heart": [
             ParametricCurve(
@@ -51,14 +46,14 @@ def main():
                 x_func=lambda t: (8 * np.cos(t) - 6 * np.cos(8 * t / 3)) / 2 - 7.5,
                 y_func=lambda t: (8 * np.sin(t) - 6 * np.sin(8 * t / 3)) / 2 - 7.5,
             ),
-            DrawOptions(draw_color=(240, 72, 100), draw_width=20),
+            DrawOptions(draw_color=(160, 160, 240), draw_width=20),
         ],
         "some_func": [
             FunctionCurve(
                 interval_bounds=[-15, 0],
                 func=lambda t: t + 15 + 2 * np.sin(3 * t) + 2 * np.cos(2 * t),
             ).to_parametric(),
-            DrawOptions(draw_color=(125, 240, 75), draw_width=20),
+            DrawOptions(draw_color=(60, 120, 240), draw_width=20),
         ],
         "spiral": [
             ParametricCurve(
@@ -66,7 +61,7 @@ def main():
                 x_func=lambda t: 0.5 * t * np.cos(t) + 8 + np.cos(t),
                 y_func=lambda t: 0.5 * t * np.sin(t) - 8 + np.cos(t),
             ),
-            DrawOptions(draw_color=(240, 180, 30), draw_width=20),
+            DrawOptions(draw_color=(120, 120, 240), draw_width=20),
         ],
     }
 
