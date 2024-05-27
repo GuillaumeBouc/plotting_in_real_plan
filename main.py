@@ -1,4 +1,5 @@
 import numpy as np
+import timeit
 from PIL import Image
 
 from my_image import MyImage
@@ -51,7 +52,7 @@ def main():
         "some_func": [
             FunctionCurve(
                 interval_bounds=[-15, 0],
-                func=lambda t: t + 15 + 2 * np.sin(3 * t) + 2 * np.cos(2 * t),
+                func=lambda x: x + 15 + 2 * np.sin(3 * x) + 2 * np.cos(2 * x),
             ).to_parametric(),
             DrawOptions(draw_color=(60, 120, 240), draw_width=20),
         ],
@@ -71,8 +72,12 @@ def main():
     ]
 
     for drawer in drawers:
-        drawer.draw()
-
+        print(f"Drawer n°{drawers.index(drawer)} started")
+        timer = timeit.Timer(lambda: drawer.draw())
+        print(
+            f"Drawer n°{drawers.index(drawer)} took: {timer.timeit(1):.6f} seconds",
+            "\n",
+        )
     image.image.transpose(Image.FLIP_TOP_BOTTOM).save(f"image/{image.name}.png")
 
 

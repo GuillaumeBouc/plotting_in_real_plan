@@ -26,7 +26,10 @@ class Drawer:
 
         elif isinstance(self.formula, ImplicitEquationGraph):
             self.implicit_equation_graph = self.formula
-            self._draw_implicit_equation_graph(self.image.draw)
+            if self._def_interval_in_draw_interval():
+                self._draw_implicit_equation_graph(self.image.draw)
+            else:
+                print("drawer passed")
 
         else:
             raise ValueError("Invalid formula type")
@@ -42,6 +45,7 @@ class Drawer:
             self.image.image_options.image_size[1] / (y_max - y_min),
         )
         offset = (-x_min * scale[0], -y_min * scale[1])
+        print(f"parameter between {t_min} and {t_max}")
 
         for t in np.linspace(t_min, t_max, self.image.image_options.image_size[0]):
             x = x_func(t)
@@ -85,6 +89,14 @@ class Drawer:
         )
         offset = (-image_x_min * scale[0], -image_y_min * scale[1])
 
+        x_min, x_max, y_min, y_max = (
+            max(x_min, image_x_min),
+            min(x_max, image_x_max),
+            max(y_min, image_y_min),
+            min(y_max, image_y_max),
+        )
+        print(f"x between {x_min} and {x_max}, y between {y_min} and {y_max}")
+
         for x in np.linspace(
             x_min,
             x_max,
@@ -118,3 +130,26 @@ class Drawer:
                         fill=self.draw_options.draw_color,
                     )
         return None
+
+    def _def_interval_in_draw_interval(self) -> bool:
+        x_min, x_max = self.implicit_equation_graph.interval_bounds[0]
+        y_min, y_max = self.implicit_equation_graph.interval_bounds[1]
+        image_x_min, image_x_max, image_y_min, image_y_max = (
+            self.image.image_options.draw_interval_bounds[0][0],
+            self.image.image_options.draw_interval_bounds[0][1],
+            self.image.image_options.draw_interval_bounds[1][0],
+            self.image.image_options.draw_interval_bounds[1][1],
+        )
+
+        return any(
+            [
+                image_x_min <= x_min <= image_x_max
+                and image_y_min <= y_min <= image_y_max,
+                image_x_min <= x_min <= image_x_max
+                and image_y_min <= y_max <= image_y_max,
+                image_x_min <= x_max <= image_x_max
+                and image_y_min <= y_min <= image_y_max,
+                image_x_min <= x_max <= image_x_max
+                and image_y_min <= y_max <= image_y_max,
+            ]
+        )
