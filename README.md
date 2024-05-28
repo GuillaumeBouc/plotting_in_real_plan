@@ -1,2 +1,7 @@
 # plotting_in_real_plan
-About all my tests related to real analysis.
+A simple plotter in the real plan, 
+
+## support
+- polar equation 
+- parametric equation
+- implicit function
