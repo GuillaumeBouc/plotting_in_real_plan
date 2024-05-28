@@ -3,7 +3,7 @@ from typing import Callable, List
 
 
 @dataclass
-class ImplicitEquationGraph:
+class ImplicitFunctionGraph:
     left_term: Callable[[float, float], float]
     rigth_term: Callable[[float, float], float]
     sign: str  # must be in ["=", "<", ">"]

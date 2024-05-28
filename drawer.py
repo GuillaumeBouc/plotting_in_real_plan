@@ -3,7 +3,7 @@ from PIL import ImageDraw
 from typing import Union
 
 from parametric_curve import ParametricCurve
-from implicit_equation_graph import ImplicitEquationGraph
+from implicit_function_graph import ImplicitFunctionGraph
 from draw_options import DrawOptions
 from my_image import MyImage
 
@@ -11,7 +11,7 @@ from my_image import MyImage
 class Drawer:
     def __init__(
         self,
-        formula: Union[ParametricCurve, ImplicitEquationGraph],
+        formula: Union[ParametricCurve, ImplicitFunctionGraph],
         draw_options: DrawOptions,
         image: MyImage,
     ) -> None:
@@ -24,10 +24,10 @@ class Drawer:
             self.parametric_curve = self.formula
             self._draw_parametric_curve(self.image.draw)
 
-        elif isinstance(self.formula, ImplicitEquationGraph):
-            self.implicit_equation_graph = self.formula
+        elif isinstance(self.formula, ImplicitFunctionGraph):
+            self.implicit_function_graph = self.formula
             if self._def_interval_in_draw_interval():
-                self._draw_implicit_equation_graph(self.image.draw)
+                self._draw_implicit_function_graph(self.image.draw)
             else:
                 print("drawer passed")
 
@@ -66,9 +66,9 @@ class Drawer:
             )
         return None
 
-    def _draw_implicit_equation_graph(self, draw: ImageDraw) -> None:
-        x_min, x_max = self.implicit_equation_graph.interval_bounds[0]
-        y_min, y_max = self.implicit_equation_graph.interval_bounds[1]
+    def _draw_implicit_function_graph(self, draw: ImageDraw) -> None:
+        x_min, x_max = self.implicit_function_graph.interval_bounds[0]
+        y_min, y_max = self.implicit_function_graph.interval_bounds[1]
         image_x_min, image_x_max, image_y_min, image_y_max = (
             self.image.image_options.draw_interval_bounds[0][0],
             self.image.image_options.draw_interval_bounds[0][1],
@@ -114,7 +114,7 @@ class Drawer:
                 ),
             ):
 
-                if self.implicit_equation_graph.equation(float(x), float(y)):
+                if self.implicit_function_graph.equation(float(x), float(y)):
 
                     draw.ellipse(
                         [
@@ -132,8 +132,8 @@ class Drawer:
         return None
 
     def _def_interval_in_draw_interval(self) -> bool:
-        x_min, x_max = self.implicit_equation_graph.interval_bounds[0]
-        y_min, y_max = self.implicit_equation_graph.interval_bounds[1]
+        x_min, x_max = self.implicit_function_graph.interval_bounds[0]
+        y_min, y_max = self.implicit_function_graph.interval_bounds[1]
         image_x_min, image_x_max, image_y_min, image_y_max = (
             self.image.image_options.draw_interval_bounds[0][0],
             self.image.image_options.draw_interval_bounds[0][1],

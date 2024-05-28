@@ -9,7 +9,7 @@ from drawer import Drawer
 from parametric_curve import ParametricCurve
 from function_curve import FunctionCurve
 from polar_equation_curve import PolarCurve
-from implicit_equation_graph import ImplicitEquationGraph
+from implicit_function_graph import ImplicitFunctionGraph
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
 
     draw_options_and_parametric_curve_per_name = {
         "background": [
-            ImplicitEquationGraph(
+            ImplicitFunctionGraph(
                 left_term=lambda x, y: np.sin(x - np.sin(x + y)),
                 rigth_term=lambda x, y: 0,
                 sign="=",
