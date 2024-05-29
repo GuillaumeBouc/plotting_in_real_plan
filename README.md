@@ -1,5 +1,5 @@
 # plotting_in_real_plan
-A simple plotter in the real plan, 
+A simple grapher in the real plan, 
 
 ## support
 - polar equation 
