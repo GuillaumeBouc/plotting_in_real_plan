@@ -1,16 +1,14 @@
 from typing import Callable, List
+from dataclasses import dataclass
 from parametric_curve import ParametricCurve
 
 
+@dataclass
 class FunctionCurve:
-    def __init__(
-        self,
-        interval_bounds: List[float],
-        func: Callable[[float], float],
-    ):
-        self.interval_bounds = interval_bounds
-        self.func = func
+    interval_bounds: List[float]
+    func: Callable[[float], float]
 
+    @property
     def to_parametric(self) -> ParametricCurve:
         return ParametricCurve(
             interval_bounds=self.interval_bounds,
