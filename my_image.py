@@ -15,6 +15,7 @@ class MyImage:
         if self.image_options.has_axis:
             self._draw_frame()
 
+    #  découpe en d'autres methodes et appelle les toutes ici
     def _draw_frame(self) -> None:
         # draw x and y axis with mesure of 1 and image_option.interval_bounds
 
