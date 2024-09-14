@@ -5,7 +5,7 @@ from typing import Callable, List
 @dataclass
 class ImplicitFunctionGraph:
     left_term: Callable[[float, float], float]
-    rigth_term: Callable[[float, float], float]
+    right_term: Callable[[float, float], float]
     sign: str  # must be in ["=", "<", ">"]
     tolerance: float
     interval_bounds: List[List[float]]
@@ -19,17 +19,17 @@ class ImplicitFunctionGraph:
         if self.sign == "=":
             return (
                 lambda x, y: abs(
-                    float(self.left_term(x, y)) - float(self.rigth_term(x, y))
+                    float(self.left_term(x, y)) - float(self.right_term(x, y))
                 )
                 < self.tolerance
             )
         elif self.sign == "<":
             return (
-                lambda x, y: self.left_term(x, y) - self.rigth_term(x, y)
+                lambda x, y: self.left_term(x, y) - self.right_term(x, y)
                 < self.tolerance
             )
         elif self.sign == ">":
             return (
-                lambda x, y: self.left_term(x, y) - self.rigth_term(x, y)
+                lambda x, y: self.left_term(x, y) - self.right_term(x, y)
                 > -self.tolerance
             )
