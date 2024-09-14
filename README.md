@@ -1,7 +1,10 @@
 # plotting_in_real_plan
-A simple grapher in the real plan, 
+A simple grapher in the real plan in python with PIL, 
 
 ## support
-- polar equation 
+- implicit equation
 - parametric equation
-- implicit function
+
+## support also via parameterization
+- one-variable function (from R to R)
+- polar equation
