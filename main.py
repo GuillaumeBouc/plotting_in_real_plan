@@ -22,7 +22,7 @@ def main():
 
     image = MyImage(image_options)
 
-    draw_options_and_parametric_curve_per_name = {
+    draw_options_and_graph_per_name = {
         "background": [
             None,
             ImplicitFunctionGraph(
@@ -64,11 +64,8 @@ def main():
             DrawOptions(draw_color=(60, 120, 240), line_width=20),
         ],
         "spiral": [
-            ParametricCurve(
-                interval_bounds=[0, 4 * np.pi],
-                draw_interval_bounds=[[-15, 15], [-15, 15]],
-                x_func=lambda t: 0.5 * t * np.cos(t) + 8 + np.cos(t),
-                y_func=lambda t: 0.5 * t * np.sin(t) - 8 + np.cos(t),
+            PolarCurve([0, 4 * np.pi], r_func=lambda t: 0.5 * t).to_parametric(
+                offset=[7.5, 7.5], draw_interval_bounds=[[-15, 15], [-15, 15]]
             ),
             None,
             DrawOptions(draw_color=(120, 120, 240), line_width=20),
@@ -76,15 +73,19 @@ def main():
     }
 
     drawers = [
-        Drawer(parametric, implicit, draw_option, image)
-        for parametric, implicit, draw_option in draw_options_and_parametric_curve_per_name.values()
+        Drawer(parametric, implicit, draw_option, image, name)
+        for name, (
+            parametric,
+            implicit,
+            draw_option,
+        ) in draw_options_and_graph_per_name.items()
     ]
 
     for drawer in drawers:
-        print(f"Drawer n°{drawers.index(drawer)} started")
+        print(f"Drawer {drawer.name} (n°{drawers.index(drawer)}) started")
         timer = timeit.Timer(lambda: drawer.draw())
         print(
-            f"Drawer n°{drawers.index(drawer)} took: {timer.timeit(1):.6f} seconds",
+            f"Drawer {drawer.name} (n°{drawers.index(drawer)}) took: {timer.timeit(1):.6f} seconds",
             "\n",
         )
     image.image.transpose(Image.FLIP_TOP_BOTTOM).save(f"image/{image.name}.png")
