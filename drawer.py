@@ -15,6 +15,7 @@ class Drawer:
         implicit_function_graph: ImplicitFunctionGraph = None,
         draw_options: DrawOptions = None,
         image: MyImage = None,
+        name: str = None,
     ) -> None:
         self.parametric_curve = parametric_curve
         self.implicit_function_graph = implicit_function_graph
@@ -29,6 +30,7 @@ class Drawer:
             )
         self.draw_options = draw_options
         self.image = image
+        self.name = name
 
     def draw(self) -> None:
         self.image_bounds = (
