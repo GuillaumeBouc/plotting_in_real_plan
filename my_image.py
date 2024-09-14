@@ -1,85 +1,92 @@
 from PIL import Image, ImageDraw
-
 from image_options import ImageOptions
+from typing import Tuple
 
 
 class MyImage:
-    def __init__(self, image_options: ImageOptions) -> None:
-        self.image_options = image_options
-        self.image = Image.new(
-            "RGB", self.image_options.image_size, self.image_options.background_color
-        )
+    def __init__(self, options: ImageOptions) -> None:
+        self.options = options
+        self.image = Image.new("RGB", self.options.size, self.options.background_color)
         self.draw = ImageDraw.Draw(self.image)
-        self.name = self.image_options.image_name
+        self.name = self.options.name
 
-        if self.image_options.has_axis:
+        if self.options.show_axes:
             self._draw_frame()
 
-    #  découpe en d'autres methodes et appelle les toutes ici
     def _draw_frame(self) -> None:
-        # draw x and y axis with mesure of 1 and image_option.interval_bounds
+        self._draw_grid()
+        self._draw_axes()
+        self._draw_ticks()
 
-        x_min, x_max = self.image_options.draw_interval_bounds[0]
-        y_min, y_max = self.image_options.draw_interval_bounds[1]
-        scale = (
-            self.image_options.image_size[0] / (x_max - x_min),
-            self.image_options.image_size[1] / (y_max - y_min),
-        )
-        offset = (-x_min * scale[0], -y_min * scale[1])
+    def _draw_grid(self) -> None:
+        x_min, x_max = self.options.draw_bounds[0]
+        y_min, y_max = self.options.draw_bounds[1]
+        scale_x, scale_y = self._calculate_scale()
+        offset_x, offset_y = self._calculate_offset(scale_x, scale_y)
 
-        # draw an background ligth-grey grid
-        for i in range(int(x_min), int(x_max)):
+        for i in range(int(x_min), int(x_max) + 1):
+            x = i * scale_x + offset_x
             self.draw.line(
-                [
-                    (i * scale[0] + offset[0], 0),
-                    (i * scale[0] + offset[0], self.image_options.image_size[1]),
-                ],
-                fill=(180, 180, 180),
-                width=2,
-            )
-        for i in range(int(y_min), int(y_max)):
-            self.draw.line(
-                [
-                    (0, i * scale[1] + offset[1]),
-                    (self.image_options.image_size[0], i * scale[1] + offset[1]),
-                ],
-                fill=(180, 180, 180),
-                width=2,
+                [(x, 0), (x, self.options.size[1])],
+                fill=self.options.grid_color,
+                width=self.options.grid_width,
             )
 
-        # draw x and y axis
+        for i in range(int(y_min), int(y_max) + 1):
+            y = i * scale_y + offset_y
+            self.draw.line(
+                [(0, y), (self.options.size[0], y)],
+                fill=self.options.grid_color,
+                width=self.options.grid_width,
+            )
+
+    def _draw_axes(self) -> None:
+        scale_x, scale_y = self._calculate_scale()
+        offset_x, offset_y = self._calculate_offset(scale_x, scale_y)
+
         self.draw.line(
-            [
-                (0, offset[1]),
-                (self.image_options.image_size[0], offset[1]),
-            ],
-            fill=self.image_options.axis_color,
-            width=self.image_options.axis_width,
+            [(0, offset_y), (self.options.size[0], offset_y)],
+            fill=self.options.axis_color,
+            width=self.options.axis_width,
         )
         self.draw.line(
-            [
-                (offset[0], 0),
-                (offset[0], self.image_options.image_size[1]),
-            ],
-            fill=self.image_options.axis_color,
-            width=self.image_options.axis_width,
+            [(offset_x, 0), (offset_x, self.options.size[1])],
+            fill=self.options.axis_color,
+            width=self.options.axis_width,
         )
-        # draw ticks
-        for i in range(int(x_min), int(x_max)):
+
+    def _draw_ticks(self) -> None:
+        x_min, x_max = self.options.draw_bounds[0]
+        y_min, y_max = self.options.draw_bounds[1]
+        scale_x, scale_y = self._calculate_scale()
+        offset_x, offset_y = self._calculate_offset(scale_x, scale_y)
+        tick_length = self.options.tick_length
+
+        for i in range(int(x_min), int(x_max) + 1):
+            x = i * scale_x + offset_x
             self.draw.line(
-                [
-                    (i * scale[0] + offset[0], offset[1] - 15),
-                    (i * scale[0] + offset[0], offset[1] + 15),
-                ],
-                fill=self.image_options.axis_color,
-                width=self.image_options.axis_width,
+                [(x, offset_y - tick_length), (x, offset_y + tick_length)],
+                fill=self.options.axis_color,
+                width=self.options.axis_width,
             )
-        for i in range(int(y_min), int(y_max)):
+
+        for i in range(int(y_min), int(y_max) + 1):
+            y = i * scale_y + offset_y
             self.draw.line(
-                [
-                    (offset[0] - 15, i * scale[1] + offset[1]),
-                    (offset[0] + 15, i * scale[1] + offset[1]),
-                ],
-                fill=self.image_options.axis_color,
-                width=self.image_options.axis_width,
+                [(offset_x - tick_length, y), (offset_x + tick_length, y)],
+                fill=self.options.axis_color,
+                width=self.options.axis_width,
             )
+
+    def _calculate_scale(self) -> Tuple[float, float]:
+        x_min, x_max = self.options.draw_bounds[0]
+        y_min, y_max = self.options.draw_bounds[1]
+        return (
+            self.options.size[0] / (x_max - x_min),
+            self.options.size[1] / (y_max - y_min),
+        )
+
+    def _calculate_offset(self, scale_x: float, scale_y: float) -> Tuple[float, float]:
+        x_min, _ = self.options.draw_bounds[0]
+        y_min, _ = self.options.draw_bounds[1]
+        return (-x_min * scale_x, -y_min * scale_y)
