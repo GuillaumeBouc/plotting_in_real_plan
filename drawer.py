@@ -1,10 +1,9 @@
 import numpy as np
-from PIL import ImageDraw
 from typing import Tuple, Union
 
-from parametric_curve import ParametricCurve
-from implicit_function_graph import ImplicitFunctionGraph
-from draw_options import DrawOptions
+from graphs_classes.parametric_curve import ParametricCurve
+from graphs_classes.implicit_function_graph import ImplicitFunctionGraph
+from options_classes.draw_options import DrawOptions
 from my_image import MyImage
 
 
@@ -36,12 +35,10 @@ class Drawer:
         else:
             raise ValueError("Unsupported curve type")
 
-    def _get_bounds(
-        self, bounds: list[list[float]]
-    ) -> Tuple[float, float, float, float]:
+    def _get_bounds(self, bounds: list[list[float]]) -> Tuple[float]:
         return (bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1])
 
-    def _get_curve_bounds(self) -> Tuple[float, float, float, float]:
+    def _get_curve_bounds(self) -> Tuple[float]:
         if isinstance(self.curve, ParametricCurve):
             return self._get_bounds(self.curve.draw_interval_bounds)
         elif isinstance(self.curve, ImplicitFunctionGraph):
@@ -88,8 +85,8 @@ class Drawer:
         self,
         x: float,
         y: float,
-        scale: Tuple[float, float],
-        offset: Tuple[float, float],
+        scale: Tuple[float],
+        offset: Tuple[float],
     ) -> None:
         draw = self.image.draw
         line_width = self.draw_options.line_width
@@ -107,7 +104,7 @@ class Drawer:
             fill=self.draw_options.draw_color,
         )
 
-    def _calculate_scale(self) -> Tuple[float, float]:
+    def _calculate_scale(self) -> Tuple[float]:
         def_x_min, def_x_max, def_y_min, def_y_max = self.curve_bounds
         intersect_size = self._intersect_draw_interval_image_size()
         return (
@@ -115,11 +112,11 @@ class Drawer:
             intersect_size[1] / (def_y_max - def_y_min),
         )
 
-    def _calculate_offset(self, scale: Tuple[float, float]) -> Tuple[float, float]:
+    def _calculate_offset(self, scale: Tuple[float]) -> Tuple[float]:
         img_x_min, _, img_y_min, _ = self.image_bounds
         return (-img_x_min * scale[0], -img_y_min * scale[1])
 
-    def _intersect_draw_interval_image_size(self) -> Tuple[float, float]:
+    def _intersect_draw_interval_image_size(self) -> Tuple[float]:
         def_x_min, def_x_max, def_y_min, def_y_max = self.curve_bounds
         img_x_min, img_x_max, img_y_min, img_y_max = self.image_bounds
         return (
@@ -129,7 +126,7 @@ class Drawer:
             * self.image.options.size[1],
         )
 
-    def _get_draw_ranges(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+    def _get_draw_ranges(self) -> Tuple[Tuple[float], Tuple[float]]:
         def_x_min, def_x_max, def_y_min, def_y_max = self.curve_bounds
         img_x_min, img_x_max, img_y_min, img_y_max = self.image_bounds
         return (

@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-from image_options import ImageOptions
+from options_classes.image_options import ImageOptions
 from typing import Tuple
 
 

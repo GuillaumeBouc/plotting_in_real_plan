@@ -2,7 +2,7 @@ import numpy as np
 from typing import Callable, List
 from dataclasses import dataclass
 
-from parametric_curve import ParametricCurve
+from graphs_classes.parametric_curve import ParametricCurve
 
 
 @dataclass
