@@ -54,11 +54,13 @@ def main():
         "sine_wave": FunctionCurve(
             interval_bounds=[-15, 0],
             draw_interval_bounds=[[-15, 15], [-15, 15]],
-            func=lambda x: x + 15 + 2 * np.sin(3 * x) + 2 * np.cos(2 * x),
-        ).to_parametric,
-        "spiral": PolarCurve([0, 4 * np.pi], r_func=lambda t: 0.5 * t).to_parametric(
-            offset=[7.5, 7.5], draw_interval_bounds=[[-15, 15], [-15, 15]]
-        ),
+            func=lambda x: x + 2 * np.sin(3 * x) + 2 * np.cos(2 * x),
+        ).to_parametric(offset=[0, 15]),
+        "spiral": PolarCurve(
+            interval_bounds=[0, 4 * np.pi],
+            draw_interval_bounds=[[-15, 15], [-15, 15]],
+            r_func=lambda t: 0.5 * t,
+        ).to_parametric(offset=[7.5, 7.5]),
     }
 
     custom_draw_options = {
