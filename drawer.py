@@ -4,7 +4,7 @@ from typing import Tuple, Union
 from graphs_classes.parametric_curve import ParametricCurve
 from graphs_classes.implicit_function_graph import ImplicitFunctionGraph
 from options_classes.draw_options import DrawOptions
-from my_image import MyImage
+from canvas import Canvas
 
 
 class Drawer:
@@ -12,7 +12,7 @@ class Drawer:
         self,
         curve: Union[ParametricCurve, ImplicitFunctionGraph],
         draw_options: DrawOptions,
-        image: MyImage,
+        image: Canvas,
         name: str,
     ) -> None:
         self.curve = curve

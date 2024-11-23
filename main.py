@@ -2,7 +2,7 @@ import timeit
 from typing import Dict, Union
 from PIL import Image
 
-from my_image import MyImage
+from canvas import Canvas
 from options_classes.image_options import ImageOptions
 from options_classes.draw_options import DrawOptions
 from drawer import Drawer
@@ -17,7 +17,9 @@ def main(
     default_draw_options: DrawOptions = DrawOptions(1, (0, 0, 0)),
 ):
 
-    image = MyImage(options=image_options)
+    image = Canvas(
+        options=image_options,
+    )
 
     drawers = [
         Drawer(curve, draw_options.get(name, default_draw_options), image, name)
@@ -32,4 +34,3 @@ def main(
         )
 
     image.image.transpose(Image.FLIP_TOP_BOTTOM).save(f"image/{image.name}.png")
-    return image
