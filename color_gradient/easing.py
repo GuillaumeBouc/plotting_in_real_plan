@@ -1,5 +1,5 @@
 import math
-from typing import Callable, Dict
+from typing import Callable
 
 EasingFunction = Callable[[float], float]
 

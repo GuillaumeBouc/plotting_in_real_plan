@@ -1,6 +1,5 @@
 from colorsys import rgb_to_hls, hls_to_rgb, rgb_to_hsv, hsv_to_rgb
 from typing import Tuple, Protocol, runtime_checkable
-from abc import ABC, abstractmethod
 
 
 @runtime_checkable
