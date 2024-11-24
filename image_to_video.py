@@ -35,9 +35,9 @@ def images_to_video(
 ):
     assert input_format.lower() in ["png", "jpg"]
     if sort_func is not None:
-        image_files = sorted(glob(f"{folder}/*.{input_format.lower()}"), key=sort_func)
+        image_files = sorted(glob(f"{folder}*.{input_format.lower()}"), key=sort_func)
     else:
-        image_files = glob(f"{folder}/*.{input_format.lower()}")
+        image_files = glob(f"{folder}*.{input_format.lower()}")
     write_video(output_filename, image_files, resolution, FPS)
 
 
@@ -46,4 +46,11 @@ if __name__ == "__main__":
         int(text) if text.isdigit() else text.lower()
         for text in re.split(r"(\d+)", filename)
     ]
-    images_to_video("images", "png", 60, (2048, 2048), "result.avi", natural_sort_key)
+    images_to_video(
+        "temp/",
+        "png",
+        120,
+        (512, 512),
+        "results/animations/example.avi",
+        natural_sort_key,
+    )
