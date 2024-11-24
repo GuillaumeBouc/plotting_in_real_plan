@@ -33,4 +33,4 @@ def main(
             f"Drawer {drawer.name} (n°{index}) took: {draw_timer.timeit(1):.6f} seconds\n"
         )
 
-    image.image.transpose(Image.FLIP_TOP_BOTTOM).save(f"image/{image.name}.png")
+    image.image.transpose(Image.FLIP_TOP_BOTTOM).save(f"images/{image.name}.png")

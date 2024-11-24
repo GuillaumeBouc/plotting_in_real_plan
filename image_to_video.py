@@ -46,4 +46,4 @@ if __name__ == "__main__":
         int(text) if text.isdigit() else text.lower()
         for text in re.split(r"(\d+)", filename)
     ]
-    images_to_video("image", "png", 60, (2048, 2048), "result.avi", natural_sort_key)
+    images_to_video("images", "png", 60, (2048, 2048), "result.avi", natural_sort_key)
