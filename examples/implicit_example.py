@@ -5,15 +5,14 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from color_gradient import GradientGenerator
-
-from options_classes.draw_options import DrawOptions
-from options_classes.image_options import ImageOptions
-from graphs_classes.parametric_curve import ParametricCurve
-from graphs_classes.function_curve import FunctionCurve
-from graphs_classes.polar_equation_curve import PolarCurve
-from graphs_classes.implicit_function_graph import ImplicitFunctionGraph
+from options_classes import DrawOptions, ImageOptions
+from graphs_classes import (
+    ImplicitFunctionGraph,
+    ParametricCurve,
+    FunctionCurve,
+    PolarCurve,
+)
 from main import main
-
 
 size = (2048, 2048)
 draw_bounds = [[-4, 4], [-4, 4]]
