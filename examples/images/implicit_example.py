@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from color_gradient import GradientGenerator
 from options_classes import DrawOptions, ImageOptions
@@ -22,12 +22,12 @@ image_options = ImageOptions(
     draw_bounds=draw_bounds,
     show_axes=False,
     background_color=(255, 255, 255),
-    name="example",
+    name="implicit_example",
 )
 
-draw_options_per_name = {"example": DrawOptions(1, (0, 0, 0))}
+draw_options_per_name = {"implicit_example": DrawOptions(1, (0, 0, 0))}
 curves_per_name = {
-    "example": ImplicitFunctionGraph(
+    "implicit_example": ImplicitFunctionGraph(
         lambda x, y: int(np.cos(int(x**2)))
         + int(np.cos(int(y**2)))
         + np.tan(x**2 + y**2)
