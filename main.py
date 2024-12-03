@@ -1,5 +1,4 @@
 import timeit
-import inspect
 from typing import Dict, Union
 from PIL import Image
 
