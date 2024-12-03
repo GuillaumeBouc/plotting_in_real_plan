@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable, List
+from dataclasses import dataclass
 
 
 @dataclass
@@ -15,7 +16,7 @@ class ImplicitFunctionGraph:
             raise ValueError("Invalid sign type")
 
     @property
-    def equation(self) -> Callable[[float, float], float]:
+    def equation(self) -> Callable[[float, float], bool]:
         if self.sign == "=":
             return (
                 lambda x, y: abs(
