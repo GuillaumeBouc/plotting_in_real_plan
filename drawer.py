@@ -54,7 +54,7 @@ class Drawer:
         offset = self._calculate_offset(scale)
         print(f"parameter between {t_min} and {t_max}")
 
-        for t in np.linspace(t_min, t_max, self.image.options.size[0]):
+        for t in np.linspace(t_min, t_max, self.curve.precision):
             x, y = x_func(t), y_func(t)
             self._draw_point(x, y, scale, offset)
 
