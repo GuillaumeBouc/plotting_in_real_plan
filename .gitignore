@@ -1,4 +1,4 @@
 __pycache__/
 env/
 .DS_Store
-temp/
+results/animations/high_res/
