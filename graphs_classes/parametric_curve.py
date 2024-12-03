@@ -8,3 +8,4 @@ class ParametricCurve:
     draw_interval_bounds: List[List[float]]
     x_func: Callable[[float], float]
     y_func: Callable[[float], float]
+    precision: int
