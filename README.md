@@ -1,5 +1,5 @@
 # plotting_in_real_plan
-A simple grapher in the real plan in python with PIL, 
+A simple grapher in the real plan in python with PIL, that makes animations with openCV.
 
 ## support
 - implicit equation
