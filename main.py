@@ -1,4 +1,5 @@
 import timeit
+import inspect
 from typing import Dict, Union
 from PIL import Image
 
@@ -15,7 +16,6 @@ def main(
     image_options: ImageOptions,
     draw_options: Dict[str, DrawOptions],
     default_draw_options: DrawOptions = DrawOptions(1, (0, 0, 0)),
-    save_folder: str = "results/images/",
 ):
 
     image = Canvas(
@@ -34,4 +34,4 @@ def main(
             f"Drawer {drawer.name} (n°{index}) took: {draw_timer.timeit(1):.6f} seconds\n"
         )
 
-    image.image.transpose(Image.FLIP_TOP_BOTTOM).save(f"{save_folder}{image.name}.png")
+    return image.image.transpose(Image.FLIP_TOP_BOTTOM)
