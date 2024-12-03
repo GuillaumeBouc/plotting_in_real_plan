@@ -46,4 +46,4 @@ if __name__ == "__main__":
         image_options,
         draw_options_per_name,
         default_draw_options=DrawOptions(1, (175, 254, 255)),
-    )
+    ).save(f"results/images/{image_options.name}.png")
