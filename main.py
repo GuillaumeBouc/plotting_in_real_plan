@@ -1,4 +1,5 @@
 import timeit
+import torch
 from typing import Dict, Union
 from PIL import Image
 
@@ -15,6 +16,7 @@ def main(
     image_options: ImageOptions,
     draw_options: Dict[str, DrawOptions],
     default_draw_options: DrawOptions = DrawOptions(1, (0, 0, 0)),
+    device: torch.device = torch.device("cpu"),
 ):
 
     image = Canvas(
@@ -28,7 +30,7 @@ def main(
 
     for index, drawer in enumerate(drawers, 1):
         print(f"Drawer {drawer.name} (n°{index}) started")
-        draw_timer = timeit.Timer(lambda: drawer.draw())
+        draw_timer = timeit.Timer(lambda: drawer.draw(device))
         print(
             f"Drawer {drawer.name} (n°{index}) took: {draw_timer.timeit(1):.6f} seconds\n"
         )

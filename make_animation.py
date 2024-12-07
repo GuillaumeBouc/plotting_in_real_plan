@@ -1,6 +1,8 @@
-import numpy as np
 from typing import List, Union, Tuple
+
+import numpy as np
 import cv2
+import torch
 
 from graphs_classes import (
     ImplicitFunctionGraphFactory,
@@ -28,14 +30,20 @@ def make_animation(
     output_file_name: str,
     resolution: Tuple[int] = None,
     FPS: int = 60,
+    color_gradients: List[List[Tuple[int, int, int]]] = None,
+    device: torch.device = torch.device("cpu"),
 ) -> None:
-    print(factories[0].factory)
+
     fourcc = cv2.VideoWriter_fourcc(*"MJPG")
     out = cv2.VideoWriter(
         output_file_name, fourcc, FPS, resolution or image_options.size
     )
 
     param_values = np.linspace(bounds[0], bounds[1], num_steps)
+
+    if color_gradients is not None:
+        for color_gradient in color_gradients:
+            assert len(color_gradient) == num_steps
 
     for param_index, param in enumerate(param_values):
 
@@ -49,6 +57,9 @@ def make_animation(
         ):
             curves_per_name[f"{param_index}_{func_index}"] = factory(param)
 
+            if color_gradient is not None:
+                draw_option.draw_color = color_gradients[func_index][param_index]
+
             draw_options_per_name[f"{param_index}_{func_index}"] = draw_option
 
         img = np.array(
@@ -57,6 +68,7 @@ def make_animation(
                 image_options,
                 draw_options_per_name,
                 default_draw_options=DrawOptions(1, (0, 0, 0)),
+                device=device,
             )
         )
 

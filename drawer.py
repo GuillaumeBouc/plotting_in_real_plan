@@ -6,6 +6,8 @@ from graphs_classes.implicit_function_graph import ImplicitFunctionGraph
 from options_classes.draw_options import DrawOptions
 from canvas import Canvas
 
+import torch
+
 
 class Drawer:
     def __init__(
@@ -22,12 +24,15 @@ class Drawer:
         self.image_bounds = self._get_bounds(image.options.draw_bounds)
         self.curve_bounds = self._get_curve_bounds()
 
-    def draw(self) -> None:
+    def draw(
+        self,
+        device: torch.device = torch.device("cpu"),
+    ) -> None:
         if isinstance(self.curve, ParametricCurve):
             self._draw_parametric_curve()
         elif isinstance(self.curve, ImplicitFunctionGraph):
             if self._definition_interval_in_draw_interval():
-                self._draw_implicit_function_graph()
+                self._draw_implicit_function_graph(device)
             else:
                 raise ValueError(
                     "The definition interval of the implicit function graph is not in the draw interval"
@@ -58,7 +63,7 @@ class Drawer:
             x, y = x_func(t), y_func(t)
             self._draw_point(x, y, scale, offset)
 
-    def _draw_implicit_function_graph(self) -> None:
+    def _draw_implicit_function_graph(self, device: torch.device) -> None:
         scale = self._calculate_scale()
         offset = self._calculate_offset(scale)
         intersect_size = self._intersect_draw_interval_image_size()
@@ -67,11 +72,15 @@ class Drawer:
         print(
             f"x between {x_range[0]} and {x_range[1]}, y between {y_range[0]} and {y_range[1]}"
         )
-
-        for x in np.linspace(*x_range, round(intersect_size[0])):
-            for y in np.linspace(*y_range, round(intersect_size[1])):
-                if self.curve.equation(float(x), float(y)):
-                    self._draw_point(x, y, scale, offset)
+        t_x, t_y = (
+            torch.linspace(*x_range, round(intersect_size[0]), device=device),
+            torch.linspace(*y_range, round(intersect_size[1]), device=device),
+        )
+        x_grid, y_grid = torch.meshgrid(t_x, t_y, indexing="ij")
+        points_to_draw = torch.nonzero(self.curve.equation(x_grid, y_grid))
+        for point in points_to_draw:
+            x, y = t_x[point[0]].item(), t_y[point[1]].item()
+            self._draw_point(x, y, scale, offset)
 
     def _definition_interval_in_draw_interval(self) -> bool:
         def_x_min, def_x_max, def_y_min, def_y_max = self.curve_bounds

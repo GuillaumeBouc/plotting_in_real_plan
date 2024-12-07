@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Callable, List
 from dataclasses import dataclass
+import torch
 
 
 @dataclass
 class ImplicitFunctionGraph:
-    left_term: Callable[[float, float], float]
-    right_term: Callable[[float, float], float]
+    term: Callable[
+        [torch.Tensor, torch.Tensor], torch.Tensor
+    ]  # the left term of an equation whose right term is 0
     sign: str  # must be in ["=", "<", ">"]
     tolerance: float
     interval_bounds: List[List[float]]
@@ -16,21 +18,23 @@ class ImplicitFunctionGraph:
             raise ValueError("Invalid sign type")
 
     @property
-    def equation(self) -> Callable[[float, float], bool]:
+    def equation(self) -> Callable[[torch.Tensor], torch.Tensor]:
         if self.sign == "=":
-            return (
-                lambda x, y: abs(
-                    float(self.left_term(x, y)) - float(self.right_term(x, y))
-                )
-                < self.tolerance
+            return lambda t_x, t_y: torch.where(
+                torch.abs(self.term(t_x, t_y))
+                < torch.full_like(t_x, fill_value=self.tolerance),
+                True,
+                False,
             )
         elif self.sign == "<":
-            return (
-                lambda x, y: self.left_term(x, y) - self.right_term(x, y)
-                < self.tolerance
+            return lambda t_x, t_y: torch.where(
+                self.term(t_x, t_y) < torch.full_like(t_x, fill_value=self.tolerance),
+                True,
+                False,
             )
         elif self.sign == ">":
-            return (
-                lambda x, y: self.left_term(x, y) - self.right_term(x, y)
-                > -self.tolerance
+            return lambda t_x, t_y: torch.where(
+                self.term(t_x, t_y) > torch.full_like(t_x, fill_value=self.tolerance),
+                True,
+                False,
             )
