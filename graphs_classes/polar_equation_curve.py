@@ -1,9 +1,9 @@
-import numpy as np
 from typing import Callable, List
 from dataclasses import dataclass
-
-import sys
 from pathlib import Path
+import torch
+import sys
+
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -14,7 +14,7 @@ from graphs_classes.parametric_curve import ParametricCurve
 class PolarCurve:
     interval_bounds: List[float]
     draw_interval_bounds: List[List[float]]
-    r_func: Callable[[float], float]
+    r_func: Callable[[torch.Tensor], torch.Tensor]
     precision: int
 
     def to_parametric(
@@ -24,7 +24,7 @@ class PolarCurve:
         return ParametricCurve(
             interval_bounds=self.interval_bounds,
             draw_interval_bounds=self.draw_interval_bounds,
-            x_func=lambda t: self.r_func(t) * np.cos(t) + offset[0],
-            y_func=lambda t: self.r_func(t) * np.sin(t) - offset[1],
+            x_func=lambda t: self.r_func(t) * torch.cos(t) + offset[0],
+            y_func=lambda t: self.r_func(t) * torch.sin(t) - offset[1],
             precision=self.precision,
         )

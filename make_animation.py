@@ -1,8 +1,6 @@
 from typing import List, Union, Tuple
-
-import numpy as np
-import cv2
 import torch
+import cv2
 
 from graphs_classes import (
     ImplicitFunctionGraphFactory,
@@ -39,7 +37,7 @@ def make_animation(
         output_file_name, fourcc, FPS, resolution or image_options.size
     )
 
-    param_values = np.linspace(bounds[0], bounds[1], num_steps)
+    param_values = torch.linspace(bounds[0], bounds[1], num_steps)
 
     if color_gradients is not None:
         for color_gradient in color_gradients:
@@ -57,22 +55,21 @@ def make_animation(
         ):
             curves_per_name[f"{param_index}_{func_index}"] = factory(param)
 
-            if color_gradient is not None:
+            if color_gradients is not None:
                 draw_option.draw_color = color_gradients[func_index][param_index]
 
             draw_options_per_name[f"{param_index}_{func_index}"] = draw_option
 
-        img = np.array(
+        img = cv2.cvtColor(
             main(
                 curves_per_name,
                 image_options,
                 draw_options_per_name,
                 default_draw_options=DrawOptions(1, (0, 0, 0)),
                 device=device,
-            )
+            ).image.numpy(),
+            cv2.COLOR_RGB2BGR,
         )
-
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         if img is None:
             print(f"Warning : image could not be read.")
             continue

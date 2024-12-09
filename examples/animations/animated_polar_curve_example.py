@@ -1,4 +1,4 @@
-import numpy as np
+import torch
 import sys
 from pathlib import Path
 
@@ -9,20 +9,20 @@ from graphs_classes import PolarCurve, PolarCurveFactory
 from make_animation import make_animation
 
 
-size = (1024, 1024)
+size = (512, 512)
 draw_bounds = [[-4, 4], [-4, 4]]
 
 
 make_animation(
-    [0, 50 * np.pi],
+    [0, 50 * torch.pi],
     100,
     [
         PolarCurveFactory(
             lambda p: PolarCurve(
                 [0, 0 + p],
                 draw_bounds,
-                lambda r: 3 * np.sin((24 * r) / 25),
-                precision=15000,
+                lambda r: 3 * torch.sin((24 * r) / 25),
+                precision=20000,
             )
         ),
     ],
@@ -36,5 +36,5 @@ make_animation(
         background_color=(0, 0, 0),
     ),
     "results/animations/animated_polar_curve_example.avi",
-    resolution=(1024, 1024),
+    resolution=(512, 512),
 )

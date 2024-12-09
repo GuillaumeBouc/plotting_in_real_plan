@@ -1,12 +1,9 @@
-import numpy as np
 from typing import Tuple, Union
-
-from graphs_classes.parametric_curve import ParametricCurve
-from graphs_classes.implicit_function_graph import ImplicitFunctionGraph
-from options_classes.draw_options import DrawOptions
-from canvas import Canvas
-
 import torch
+
+from graphs_classes import ParametricCurve, ImplicitFunctionGraph
+from options_classes import DrawOptions
+from canvas import Canvas
 
 
 class Drawer:
@@ -51,7 +48,9 @@ class Drawer:
         else:
             raise ValueError("Unsupported curve type")
 
-    def _draw_parametric_curve(self) -> None:
+    def _draw_parametric_curve(
+        self, device: torch.device = torch.device("cpu")
+    ) -> None:
         t_min, t_max = self.curve.interval_bounds
         x_func, y_func = self.curve.x_func, self.curve.y_func
 
@@ -59,9 +58,25 @@ class Drawer:
         offset = self._calculate_offset(scale)
         print(f"parameter between {t_min} and {t_max}")
 
-        for t in np.linspace(t_min, t_max, self.curve.precision):
-            x, y = x_func(t), y_func(t)
-            self._draw_point(x, y, scale, offset)
+        # Create a tensor of equally spaced points
+        t = torch.linspace(t_min, t_max, self.curve.precision, device=device)
+
+        # Calculate x and y coordinates using the parametric functions
+        x = x_func(t)
+        y = y_func(t)
+
+        # Calculate pixel coordinates
+        pixel_x = ((x * scale[0]) + offset[0]).long()
+        pixel_y = ((y * scale[1]) + offset[1]).long()
+
+        # Clamp pixel coordinates to image bounds
+        pixel_x = pixel_x.clamp(0, self.image.options.size[0] - 1)
+        pixel_y = pixel_y.clamp(0, self.image.options.size[1] - 1)
+
+        # Draw points on the image
+        self.image.image[pixel_y, pixel_x] = torch.tensor(
+            self.draw_options.draw_color, dtype=torch.uint8
+        )
 
     def _draw_implicit_function_graph(self, device: torch.device) -> None:
         scale = self._calculate_scale()
@@ -77,10 +92,17 @@ class Drawer:
             torch.linspace(*y_range, round(intersect_size[1]), device=device),
         )
         x_grid, y_grid = torch.meshgrid(t_x, t_y, indexing="ij")
-        points_to_draw = torch.nonzero(self.curve.equation(x_grid, y_grid))
-        for point in points_to_draw:
-            x, y = t_x[point[0]].item(), t_y[point[1]].item()
-            self._draw_point(x, y, scale, offset)
+        mask = self.curve.equation(x_grid, y_grid)
+
+        pixel_x = ((x_grid[mask] * scale[0]) + offset[0]).long()
+        pixel_y = ((y_grid[mask] * scale[1]) + offset[1]).long()
+
+        pixel_x = pixel_x.clamp(0, self.image.options.size[0] - 1)
+        pixel_y = pixel_y.clamp(0, self.image.options.size[1] - 1)
+
+        self.image.image[pixel_y, pixel_x] = torch.tensor(
+            self.draw_options.draw_color, dtype=torch.uint8
+        )
 
     def _definition_interval_in_draw_interval(self) -> bool:
         def_x_min, def_x_max, def_y_min, def_y_max = self.curve_bounds
@@ -88,29 +110,6 @@ class Drawer:
         return any(
             img_x_min <= bound <= img_x_max and img_y_min <= bound <= img_y_max
             for bound in [def_x_min, def_x_max, def_y_min, def_y_max]
-        )
-
-    def _draw_point(
-        self,
-        x: float,
-        y: float,
-        scale: Tuple[float],
-        offset: Tuple[float],
-    ) -> None:
-        draw = self.image.draw
-        line_width = self.draw_options.line_width
-        draw.ellipse(
-            [
-                (
-                    x * scale[0] - line_width + offset[0],
-                    y * scale[1] - line_width + offset[1],
-                ),
-                (
-                    x * scale[0] + line_width + offset[0],
-                    y * scale[1] + line_width + offset[1],
-                ),
-            ],
-            fill=self.draw_options.draw_color,
         )
 
     def _calculate_scale(self) -> Tuple[float]:

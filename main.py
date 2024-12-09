@@ -1,14 +1,11 @@
+from typing import Dict, Union
 import timeit
 import torch
-from typing import Dict, Union
-from PIL import Image
 
 from canvas import Canvas
-from options_classes.image_options import ImageOptions
-from options_classes.draw_options import DrawOptions
 from drawer import Drawer
-from graphs_classes.parametric_curve import ParametricCurve
-from graphs_classes.implicit_function_graph import ImplicitFunctionGraph
+from options_classes import ImageOptions, DrawOptions
+from graphs_classes import ParametricCurve, ImplicitFunctionGraph
 
 
 def main(
@@ -17,7 +14,7 @@ def main(
     draw_options: Dict[str, DrawOptions],
     default_draw_options: DrawOptions = DrawOptions(1, (0, 0, 0)),
     device: torch.device = torch.device("cpu"),
-):
+) -> Canvas:
 
     image = Canvas(
         options=image_options,
@@ -35,4 +32,4 @@ def main(
             f"Drawer {drawer.name} (n°{index}) took: {draw_timer.timeit(1):.6f} seconds\n"
         )
 
-    return image.image.transpose(Image.FLIP_TOP_BOTTOM)
+    return image

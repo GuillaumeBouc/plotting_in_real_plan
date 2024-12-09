@@ -1,4 +1,4 @@
-import numpy as np
+import torch
 import sys
 from pathlib import Path
 
@@ -14,7 +14,7 @@ from graphs_classes import (
 )
 from main import main
 
-size = (2048, 2048)
+size = (4096, 4096)
 draw_bounds = [[-4, 4], [-4, 4]]
 
 image_options = ImageOptions(
@@ -28,14 +28,13 @@ image_options = ImageOptions(
 draw_options_per_name = {"implicit_example": DrawOptions(1, (0, 0, 0))}
 curves_per_name = {
     "implicit_example": ImplicitFunctionGraph(
-        lambda x, y: int(np.cos(int(x**2)))
-        + int(np.cos(int(y**2)))
-        + np.tan(x**2 + y**2)
-        - np.cos(1.75 * x * y)
+        lambda x, y: torch.floor(torch.cos(torch.floor(x**2)))
+        + torch.floor(torch.cos(torch.floor(y**2)))
+        + torch.tan(x**2 + y**2)
+        - torch.cos(1.75 * x * y)
         - 0.3,
-        lambda x, y: 0,
         ">",
-        1e-5,
+        1e-10,
         draw_bounds,
     )
 }
@@ -45,5 +44,5 @@ if __name__ == "__main__":
         curves_per_name,
         image_options,
         draw_options_per_name,
-        default_draw_options=DrawOptions(1, (175, 254, 255)),
+        default_draw_options=DrawOptions(1, (0, 0, 0)),
     ).save(f"results/images/{image_options.name}.png")

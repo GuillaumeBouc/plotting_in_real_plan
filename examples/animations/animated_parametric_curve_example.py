@@ -1,5 +1,5 @@
-import numpy as np
 import sys
+import torch
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -9,21 +9,21 @@ from graphs_classes import ParametricCurve, ParametricCurveFactory
 from make_animation import make_animation
 
 
-size = (1024, 1024)
+size = (512, 512)
 draw_bounds = [[-15, 15], [-15, 15]]
 
 
 make_animation(
-    [0, 6 * np.pi],
+    [0, 6 * torch.pi],
     100,
     [
         ParametricCurveFactory(
             lambda p: ParametricCurve(
                 [0, 0 + p],
                 draw_bounds,
-                x_func=lambda x: 8 * np.cos(x) - 6 * np.cos((8 * x) / 3),
-                y_func=lambda y: 8 * np.sin(y) - 6 * np.sin((8 * y) / 3),
-                precision=10000,
+                x_func=lambda x: 8 * torch.cos(x) - 6 * torch.cos((8 * x) / 3),
+                y_func=lambda y: 8 * torch.sin(y) - 6 * torch.sin((8 * y) / 3),
+                precision=5000,
             )
         ),
     ],
@@ -37,5 +37,5 @@ make_animation(
         background_color=(0, 0, 0),
     ),
     "results/animations/animated_parametric_curve_example.avi",
-    resolution=(1024, 1024),
+    resolution=(512, 512),
 )
